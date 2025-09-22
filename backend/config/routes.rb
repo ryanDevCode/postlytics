@@ -15,4 +15,8 @@ Rails.application.routes.draw do
                sessions: 'users/sessions',
                registrations: 'users/registrations'
              }
+
+  resources :posts do
+    resources :comments, only: [:create, :index]
+  end
 end

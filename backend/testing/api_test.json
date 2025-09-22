@@ -1,0 +1,122 @@
+{
+    "info": {
+      "name": "Postlytics API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "_postman_id": "postlytics-api-001"
+    },
+    "item": [
+      {
+        "name": "Signup",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Accept", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user\": {\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n  }\n}"
+          },
+          "url": { "raw": "http://localhost:3000/users", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["users"] }
+        }
+      },
+      {
+        "name": "Login",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Accept", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user\": {\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n  }\n}"
+          },
+          "url": { "raw": "http://localhost:3000/users/sign_in", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["users","sign_in"] }
+        }
+      },
+      {
+        "name": "Create Post",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"post\": {\n    \"content\": \"Hello Postlytics! #rails #api\"\n  }\n}"
+          },
+          "url": { "raw": "http://localhost:3000/posts", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts"] }
+        }
+      },
+      {
+        "name": "List Posts",
+        "request": {
+          "method": "GET",
+          "header": [
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "url": { "raw": "http://localhost:3000/posts", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts"] }
+        }
+      },
+      {
+        "name": "Create Comment",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"comment\": {\n    \"content\": \"Nice post!\"\n  }\n}"
+          },
+          "url": { "raw": "http://localhost:3000/posts/1/comments", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts","1","comments"] }
+        }
+      },
+      {
+        "name": "List Comments",
+        "request": {
+          "method": "GET",
+          "header": [
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "url": { "raw": "http://localhost:3000/posts/1/comments", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts","1","comments"] }
+        }
+      },
+      {
+        "name": "Filter Posts by Hashtag",
+        "request": {
+          "method": "GET",
+          "header": [
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "url": { "raw": "http://localhost:3000/posts?hashtag=rails", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts"], "query":[{"key":"hashtag","value":"rails"}] }
+        }
+      },
+      {
+        "name": "Filter Posts by Date",
+        "request": {
+          "method": "GET",
+          "header": [
+            { "key": "Accept", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+          ],
+          "url": { "raw": "http://localhost:3000/posts?from=2025-09-01&to=2025-09-30", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["posts"], "query":[{"key":"from","value":"2025-09-01"},{"key":"to","value":"2025-09-30"}] }
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "jwt_token",
+        "value": ""
+      }
+    ]
+  }
+  
