@@ -1,0 +1,17 @@
+# Rails
+/log/*
+/tmp/*
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/node_modules
+/public/packs
+/public/assets
+.byebug_history
+
+# React
+/frontend/node_modules
+/frontend/build
+
+# General
+.DS_Store
+.env
