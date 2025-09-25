@@ -3,8 +3,8 @@ import { Routes, Route, Link } from "react-router-dom"
 import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+import { Button } from './components/ui/button'
+import Hero from './pages/Hero'
 import './App.css'
 
 function App() {
@@ -18,6 +18,8 @@ function App() {
         <Link to="/login">Login</Link> |{" "}
         <Link to="/dashboard">Dashboard</Link>
       </nav>
+      
+      <Hero/>
 
       <Routes>
         <Route path="/signup" element={<SignupPage />} />
