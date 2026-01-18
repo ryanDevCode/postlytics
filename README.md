@@ -31,7 +31,7 @@ The easiest way to run the application is using Docker Compose.
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/ryanDevCode/postlytics
     cd postlytics
     ```
 
