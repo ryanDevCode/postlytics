@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/axios';
-import { User, Clock } from 'lucide-react';
+import { User, Clock, X } from 'lucide-react';
 
-function RightSidebar() {
+interface RightSidebarProps {
+    onClose: () => void;
+}
+
+function RightSidebar({ onClose }: RightSidebarProps) {
     const [recentPosts, setRecentPosts] = useState<any[]>([]);
 
     useEffect(() => {
@@ -21,8 +25,17 @@ function RightSidebar() {
     };
 
     return (
-        <aside className="component-sidebar-right w-80 bg-white border-l border-gray-200 fixed right-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto hidden xl:block p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Latest Activity</h2>
+        <aside className="component-sidebar-right w-64 bg-white border-l border-gray-200 fixed right-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto hidden xl:block p-4">
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-800">Latest Activity</h2>
+                <button
+                    onClick={onClose}
+                    className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition-colors"
+                    aria-label="Close sidebar"
+                >
+                    <X size={18} />
+                </button>
+            </div>
 
             <div className="sidebar-activity-list space-y-4">
                 {recentPosts.length === 0 ? (
@@ -66,3 +79,4 @@ function RightSidebar() {
 }
 
 export default RightSidebar;
+

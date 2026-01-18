@@ -11,4 +11,11 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   
+  def admin?
+    role == 'admin'
+  end
+
+  def user?
+    role == 'user'
+  end
 end

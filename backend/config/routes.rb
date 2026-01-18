@@ -23,4 +23,6 @@ Rails.application.routes.draw do
   end
 
   get 'analytics', to: 'analytics#index'
+  get 'analytics/posts', to: 'analytics#posts'
+  get 'analytics/comments', to: 'analytics#comments'
 end

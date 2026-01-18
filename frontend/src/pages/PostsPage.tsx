@@ -12,6 +12,10 @@ function PostsPage() {
     const [error, setError] = useState('');
     const [availableHashtags, setAvailableHashtags] = useState<string[]>([]);
 
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+
     const selectedHashtag = searchParams.get('hashtag');
     const filter = searchParams.get('filter');
 
@@ -25,27 +29,65 @@ function PostsPage() {
         }
     };
 
-    const fetchPosts = async () => {
+    const fetchPosts = async (pageNum: number, isNewFilter = false) => {
         try {
-            setLoading(true);
-            const params: any = {};
+            if (pageNum === 1) setLoading(true);
+            else setIsFetchingMore(true);
+
+            const params: any = { page: pageNum, per_page: 15 };
             if (selectedHashtag) params.hashtag = selectedHashtag;
             if (filter) params.filter = filter;
 
             const response = await api.get('/posts', { params });
-            setPosts(response.data);
+            const newPosts = response.data;
+
+            if (isNewFilter) {
+                setPosts(newPosts);
+            } else {
+                setPosts(prev => [...prev, ...newPosts]);
+            }
+
+            setHasMore(newPosts.length === 15);
         } catch (err) {
             console.error('Failed to fetch posts:', err);
             setError('Failed to load posts.');
         } finally {
             setLoading(false);
+            setIsFetchingMore(false);
         }
     };
 
+    // Reset when filters change
     useEffect(() => {
-        fetchPosts();
+        setPage(1);
+        setPosts([]);
+        setHasMore(true);
+        fetchPosts(1, true);
         fetchTags();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
+
+    // Infinite scroll listener
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + document.documentElement.scrollTop + 100 >=
+                document.documentElement.offsetHeight &&
+                !loading &&
+                !isFetchingMore &&
+                hasMore
+            ) {
+                setPage(prev => {
+                    const nextPage = prev + 1;
+                    fetchPosts(nextPage);
+                    return nextPage;
+                });
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [loading, isFetchingMore, hasMore]);
 
     const handlePostCreated = (newPost: any) => {
         setPosts([newPost, ...posts]);
@@ -92,9 +134,21 @@ function PostsPage() {
                             {posts.length === 0 ? (
                                 <div className="empty-state text-center text-gray-500 py-8">No posts found.</div>
                             ) : (
-                                posts.map((post) => (
-                                    <PostItem key={post.id} post={post} />
-                                ))
+                                <>
+                                    {posts.map((post) => (
+                                        <PostItem key={post.id} post={post} />
+                                    ))}
+                                    {isFetchingMore && (
+                                        <div className="text-center py-4 text-gray-500 text-sm">
+                                            Loading more posts...
+                                        </div>
+                                    )}
+                                    {!hasMore && posts.length > 0 && (
+                                        <div className="text-center py-4 text-gray-400 text-xs">
+                                            You've reached the end of the feed.
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}

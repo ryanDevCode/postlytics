@@ -2,6 +2,10 @@ class PostsController < ApplicationController
     before_action :authenticate_user!, except: [:index, :show]
 
     def index
+      page = (params[:page] || 1).to_i
+      per_page = (params[:per_page] || 15).to_i
+      offset = (page - 1) * per_page
+
       posts = Post.includes(:user, :hashtags, :comments, :likes, :bookmarks).order(created_at: :desc)
 
       # Filtering
@@ -14,6 +18,9 @@ class PostsController < ApplicationController
       elsif params[:filter] == 'bookmarked' && current_user
         posts = posts.joins(:bookmarks).where(bookmarks: { user_id: current_user.id })
       end
+
+      # Pagination
+      posts = posts.offset(offset).limit(per_page)
 
       # Transformation for JSON
       posts_data = posts.map do |post|
