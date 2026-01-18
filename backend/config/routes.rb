@@ -18,5 +18,9 @@ Rails.application.routes.draw do
 
   resources :posts do
     resources :comments, only: [:create, :index]
+    resources :likes, only: [:create, :destroy]
+    resources :bookmarks, only: [:create, :destroy]
   end
+
+  get 'analytics', to: 'analytics#index'
 end
