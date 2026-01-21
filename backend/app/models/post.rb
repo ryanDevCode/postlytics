@@ -8,8 +8,15 @@ class Post < ApplicationRecord
   has_many :bookmarks, dependent: :destroy
 
   after_save :extract_and_save_hashtags
+  before_save :analyze_sentiment
 
   private
+
+  def analyze_sentiment
+    result = SentimentAnalyzer.analyze(content)
+    self.sentiment_score = result[:score]
+    self.sentiment_label = result[:label]
+  end
 
   def extract_and_save_hashtags
     return unless content.present?

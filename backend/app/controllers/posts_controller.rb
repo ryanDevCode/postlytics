@@ -35,12 +35,16 @@ class PostsController < ApplicationController
           likes_count: post.likes.count,
           liked_by_current_user: current_user ? post.likes.exists?(user_id: current_user.id) : false,
           bookmarked_by_current_user: current_user ? post.bookmarks.exists?(user_id: current_user.id) : false,
+          sentiment_score: post.sentiment_score,
+          sentiment_label: post.sentiment_label,
           hashtags: post.hashtags.map { |h| { id: h.id, name: h.name } },
           comments: post.comments.map { |comment|
             {
               id: comment.id,
               content: comment.content,
               created_at: comment.created_at,
+              sentiment_score: comment.sentiment_score,
+              sentiment_label: comment.sentiment_label,
               user: {
                 id: comment.user.id,
                 email: comment.user.email
@@ -62,7 +66,7 @@ class PostsController < ApplicationController
     def create
       post = current_user.posts.build(post_params)
       if post.save
-        render json: post.as_json(include: { user: { only: :email }, hashtags: {}, comments: {} }), status: :created
+        render json: post.as_json(include: { user: { only: :email }, hashtags: {}, comments: {} }).merge({ sentiment_score: post.sentiment_score, sentiment_label: post.sentiment_label }), status: :created
       else
         render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
       end

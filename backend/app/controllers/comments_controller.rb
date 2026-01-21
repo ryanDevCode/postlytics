@@ -11,7 +11,7 @@ class CommentsController < ApplicationController
       post = Post.find(params[:post_id])
       comment = post.comments.build(comment_params.merge(user: current_user))
       if comment.save
-        comment_json = comment.as_json(include: { user: { only: [:id, :email] } })
+        comment_json = comment.as_json(include: { user: { only: [:id, :email] } }).merge({ sentiment_score: comment.sentiment_score, sentiment_label: comment.sentiment_label })
         CommentsChannel.broadcast_to(post, comment_json)
         render json: comment_json, status: :created
       else
