@@ -81,9 +81,48 @@ rails s
 -   **Social Feed**:
     -   Browse posts with infinite scrolling.
     -   Sidebar with trending topics and recent activity.
+-   **AI Sentiment Analysis** 🤖:
+    -   Automatic sentiment detection on posts and comments.
+    -   Classifies content as `positive`, `negative`, or `neutral`.
+    -   Extensible architecture ready for OpenAI/Anthropic API integration.
+-   **Real-Time Features** ⚡:
+    -   Live comment updates via ActionCable WebSockets.
+    -   Real-time typing indicators (coming soon).
 -   **Role-Based Access Control (RBAC)**: Admin and User roles (configured in backend).
 -   **Responsive Design**: Fully responsive layout optimized for desktop and mobile.
+
+## 🧪 Testing
+
+This project includes a comprehensive testing suite demonstrating professional development practices.
+
+### Backend (RSpec)
+```bash
+cd backend
+bundle exec rspec
+```
+- Model specs for `User` and `Post`
+- Factory definitions with FactoryBot
+- Faker for realistic test data
+
+### Frontend (Vitest)
+```bash
+cd frontend
+npm run test
+```
+- Component smoke tests with React Testing Library
+- Fast, Vite-native test runner
+
+## 🏗️ Architecture Highlights
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| API Authentication | Devise + JWT | Stateless token-based auth |
+| Real-time | ActionCable | WebSocket connections |
+| Sentiment Analysis | `SentimentAnalyzer` Service | NLP-ready service object pattern |
+| State Management | React Hooks | Modern functional components |
+| Testing | RSpec + Vitest | Full-stack coverage |
 
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
