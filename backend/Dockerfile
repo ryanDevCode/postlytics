@@ -40,7 +40,8 @@ RUN bundle install && \
 COPY . .
 
 # Precompile bootsnap code for faster boot times
-RUN bundle exec bootsnap precompile app/ lib/
+# Use dummy DATABASE_URL to prevent connection attempts during build
+RUN DATABASE_URL="postgres://dummy:dummy@localhost/dummy" bundle exec bootsnap precompile app/ lib/
 
 
 
