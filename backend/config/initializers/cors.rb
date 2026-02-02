@@ -7,10 +7,16 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins '*'
+    # In production, set ALLOWED_ORIGINS env var to your frontend URL(s)
+    # e.g., "https://your-frontend.vercel.app" or comma-separated for multiple
+    allowed = ENV.fetch('ALLOWED_ORIGINS', '*')
+    origins_list = allowed == '*' ? '*' : allowed.split(',').map(&:strip)
+    
+    origins origins_list
     resource '*',
              headers: :any,
              expose: ['Authorization'],
              methods: %i[get post put patch delete options head]
   end
 end
+
