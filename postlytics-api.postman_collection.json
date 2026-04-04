@@ -1,0 +1,880 @@
+{
+    "info": {
+        "_postman_id": "postlytics-api",
+        "name": "Postlytics API",
+        "description": "API collection for Postlytics - Social media analytics platform",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "https://postlytics.onrender.com",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "",
+            "type": "string",
+            "description": "JWT token from login response Authorization header"
+        }
+    ],
+    "item": [
+        {
+            "name": "Health Check",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/up",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "up"
+                            ]
+                        },
+                        "description": "Check if the API is running. Returns green background HTML if healthy."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Sign Up",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Save auth token from response header",
+                                    "const authHeader = pm.response.headers.get('Authorization');",
+                                    "if (authHeader) {",
+                                    "    pm.collectionVariables.set('auth_token', authHeader);",
+                                    "    pm.test('Auth token saved', function() {",
+                                    "        pm.expect(authHeader).to.include('Bearer');",
+                                    "    });",
+                                    "}",
+                                    "",
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response contains user', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('user');",
+                                    "    pm.expect(jsonData).to.have.property('message');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"user\": {\n        \"email\": \"testuser@example.com\",\n        \"password\": \"password123\",\n        \"password_confirmation\": \"password123\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        },
+                        "description": "Register a new user. Saves JWT token to collection variables."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Save auth token from response header",
+                                    "const authHeader = pm.response.headers.get('Authorization');",
+                                    "if (authHeader) {",
+                                    "    pm.collectionVariables.set('auth_token', authHeader);",
+                                    "    pm.test('Auth token saved', function() {",
+                                    "        pm.expect(authHeader).to.include('Bearer');",
+                                    "    });",
+                                    "}",
+                                    "",
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response contains user', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('user');",
+                                    "    pm.expect(jsonData.message).to.eql('Logged in successfully');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"user\": {\n        \"email\": \"testuser@example.com\",\n        \"password\": \"password123\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/sign_in",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "sign_in"
+                            ]
+                        },
+                        "description": "Login and get JWT token. Token is automatically saved to collection variables."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 204 No Content', function() {",
+                                    "    pm.response.to.have.status(204);",
+                                    "});",
+                                    "",
+                                    "// Clear the token",
+                                    "pm.collectionVariables.set('auth_token', '');"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/sign_out",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "sign_out"
+                            ]
+                        },
+                        "description": "Logout and invalidate token."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Posts",
+            "item": [
+                {
+                    "name": "Get All Posts",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response is an array', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "});",
+                                    "",
+                                    "pm.test('Posts have expected structure', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.length > 0) {",
+                                    "        const post = jsonData[0];",
+                                    "        pm.expect(post).to.have.property('id');",
+                                    "        pm.expect(post).to.have.property('content');",
+                                    "        pm.expect(post).to.have.property('user');",
+                                    "        pm.expect(post).to.have.property('likes_count');",
+                                    "        pm.expect(post).to.have.property('hashtags');",
+                                    "        pm.expect(post).to.have.property('comments');",
+                                    "        // Save first post ID for other tests",
+                                    "        pm.collectionVariables.set('post_id', post.id);",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}",
+                                "description": "Optional - needed for liked_by_current_user field"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts?page=1&per_page=15",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of posts with comments, likes, and hashtags."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Posts by Hashtag",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts?hashtag=test",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "hashtag",
+                                    "value": "test"
+                                }
+                            ]
+                        },
+                        "description": "Filter posts by hashtag name (lowercase)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Liked Posts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts?filter=liked",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "filter",
+                                    "value": "liked"
+                                }
+                            ]
+                        },
+                        "description": "Get posts liked by current user. Requires authentication."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Bookmarked Posts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts?filter=bookmarked",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "filter",
+                                    "value": "bookmarked"
+                                }
+                            ]
+                        },
+                        "description": "Get posts bookmarked by current user. Requires authentication."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Single Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Post has expected structure', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('id');",
+                                    "    pm.expect(jsonData).to.have.property('content');",
+                                    "    pm.expect(jsonData).to.have.property('user');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1"
+                            ]
+                        },
+                        "description": "Get a single post by ID."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 201', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Post created with content', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('id');",
+                                    "    pm.expect(jsonData).to.have.property('content');",
+                                    "    pm.expect(jsonData).to.have.property('sentiment_score');",
+                                    "    pm.expect(jsonData).to.have.property('sentiment_label');",
+                                    "    // Save post ID for other tests",
+                                    "    pm.collectionVariables.set('post_id', jsonData.id);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"post\": {\n        \"content\": \"This is a test post! #testing #postlytics\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/posts",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts"
+                            ]
+                        },
+                        "description": "Create a new post. Hashtags are automatically extracted from content. Requires authentication."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Comments",
+            "item": [
+                {
+                    "name": "Get Comments for Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response is an array', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/comments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "comments"
+                            ]
+                        },
+                        "description": "Get all comments for a post. Requires authentication."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Comment",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 201', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Comment created with sentiment', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('id');",
+                                    "    pm.expect(jsonData).to.have.property('content');",
+                                    "    pm.expect(jsonData).to.have.property('sentiment_score');",
+                                    "    pm.expect(jsonData).to.have.property('sentiment_label');",
+                                    "    pm.expect(jsonData).to.have.property('user');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"comment\": {\n        \"content\": \"This is a great post!\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/comments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "comments"
+                            ]
+                        },
+                        "description": "Add a comment to a post. Sentiment is analyzed automatically. Real-time broadcast via ActionCable."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Likes",
+            "item": [
+                {
+                    "name": "Like Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 201', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Like confirmed', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql('Liked');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/likes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "likes"
+                            ]
+                        },
+                        "description": "Like a post. Requires authentication."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Unlike Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Unlike confirmed', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql('Unliked');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/likes/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "likes",
+                                "1"
+                            ]
+                        },
+                        "description": "Remove like from a post. The like ID in URL doesn't matter - it finds by user. Requires authentication."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Bookmarks",
+            "item": [
+                {
+                    "name": "Bookmark Post",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 201', function() {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "",
+                                    "pm.test('Bookmark confirmed', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql('Bookmarked');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/bookmarks",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "bookmarks"
+                            ]
+                        },
+                        "description": "Bookmark a post. Requires authentication."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Remove Bookmark",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Bookmark removed', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql('Bookmark removed');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/posts/1/bookmarks/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "posts",
+                                "1",
+                                "bookmarks",
+                                "1"
+                            ]
+                        },
+                        "description": "Remove bookmark from a post. The bookmark ID in URL doesn't matter - it finds by user. Requires authentication."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "item": [
+                {
+                    "name": "Get Dashboard Analytics",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Analytics has expected structure', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('summary');",
+                                    "    pm.expect(jsonData).to.have.property('recent_posts');",
+                                    "    pm.expect(jsonData).to.have.property('recent_comments');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics"
+                            ]
+                        },
+                        "description": "Get dashboard analytics with summary, recent posts, and recent comments."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Analytics Posts",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has posts and meta', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('posts');",
+                                    "    pm.expect(jsonData).to.have.property('meta');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/posts?page=1&per_page=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated posts for analytics table."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Analytics Comments",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function() {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response has comments and meta', function() {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('comments');",
+                                    "    pm.expect(jsonData).to.have.property('meta');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/comments?page=1&per_page=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "comments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated comments for analytics table."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

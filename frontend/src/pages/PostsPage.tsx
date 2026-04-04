@@ -154,10 +154,14 @@ function PostsPage() {
                     )}
                 </div>
 
-                <div className="posts-sidebar hidden lg:block">
-                    <div className="widget-info bg-white p-4 rounded shadow">
-                        <h3 className="font-semibold text-gray-700 mb-2">Did you know?</h3>
-                        <p className="text-sm text-gray-500">You can use markdown in your posts!</p>
+                <div className="posts-sidebar hidden lg:block space-y-6">
+                    <div className="widget-info bg-white/80 backdrop-blur p-5 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="font-semibold text-gray-800 mb-2">Did you know?</h3>
+                        <p className="text-sm text-gray-500 leading-relaxed">You can use markdown in your posts and tag them with #hashtags for better discoverability!</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-5 rounded-xl text-white">
+                        <h3 className="font-semibold mb-1">Pro Tip</h3>
+                        <p className="text-sm text-indigo-100 leading-relaxed">Visit the dashboard for real-time analytics on your content performance.</p>
                     </div>
                 </div>
             </div>
