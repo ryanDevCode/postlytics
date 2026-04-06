@@ -24,7 +24,7 @@ function MainLayout({ children }: MainLayoutProps) {
 
             {/* Center Content */}
             <div className={`layout-main-content-wrapper flex-1 flex flex-col ml-56 pt-16 min-w-0 transition-all duration-300 ${isRightSidebarOpen ? 'xl:pr-64' : ''}`}>
-                <main className="layout-main-content-area flex-1 relative w-full">
+                <main className="layout-main-content-area flex-1 relative w-full px-6 py-6">
                     {children}
                 </main>
             </div>
