@@ -12,7 +12,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def respond_with(resource, _opts = {})
-    if resource.persisted?
+    if request.method == "PUT" && resource.errors.empty?
+      render json: { message: 'Account updated successfully', user: resource }, status: :ok
+    elsif request.method == "PUT"
+      render json: { message: "Account couldn't be updated. #{resource.errors.full_messages.to_sentence}", errors: resource.errors.full_messages }, status: :unprocessable_entity
+    elsif resource.persisted?
       render json: { message: 'Signed up successfully', user: resource }, status: :ok
     else
       render json: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}", errors: resource.errors.full_messages }, status: :unprocessable_entity
