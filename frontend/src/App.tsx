@@ -3,6 +3,8 @@ import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import PostsPage from './pages/PostsPage'
+import AnalyticsPage from './pages/AnalyticsPage'
+import SettingsPage from './pages/SettingsPage'
 import Hero from './pages/Hero'
 import './App.css'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -49,6 +51,30 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <PostsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Analytics Route */}
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <AnalyticsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Settings Route */}
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <SettingsPage />
               </MainLayout>
             </ProtectedRoute>
           }
