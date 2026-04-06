@@ -19,7 +19,7 @@ import {
 import { Maximize2, X, BarChart2, TrendingUp, Activity } from 'lucide-react';
 
 interface AnalyticsData {
-    daily_posts: { date: string; count: number }[];
+    daily_posts: { date: string; posts: number; comments: number }[];
     top_hashtags: { name: string; count: number }[];
 }
 

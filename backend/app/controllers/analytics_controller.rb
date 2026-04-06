@@ -32,16 +32,16 @@ class AnalyticsController < ApplicationController
     end
 
     # 3. Totals (Global or Filtered)
-    total_posts = posts_scope.count
-    total_comments = comments_scope.count
+    total_posts = posts_scope.distinct.count
+    total_comments = comments_scope.distinct.count
     total_hashtags = Hashtag.count # This might be static or filtered depending on need. Keeping static for "global context" 
     # OR if we want hashtags used in this period:
     # total_hashtags = Hashtag.joins(:posts).where(posts: { created_at: start_date..end_date }).distinct.count
 
     # 4. Daily Stats (Chart Data)
     # We want a unified structure: [{ date, posts, comments }]
-    daily_posts = posts_scope.group("DATE(created_at)").count
-    daily_comments = comments_scope.group("DATE(created_at)").count
+    daily_posts = posts_scope.group("DATE(posts.created_at)").distinct.count
+    daily_comments = comments_scope.group("DATE(comments.created_at)").distinct.count
 
     daily_stats = (start_date..end_date).map do |date|
       d = date.to_s
@@ -65,7 +65,7 @@ class AnalyticsController < ApplicationController
     # 6. Detailed Lists (Tables)
     # Recent posts in range
     recent_posts = posts_scope.includes(:hashtags, :user)
-                              .order(created_at: :desc)
+                              .order('posts.created_at DESC')
                               .limit(50)
                               .map do |p|
                                 {
@@ -79,7 +79,7 @@ class AnalyticsController < ApplicationController
                               end
 
     recent_comments = comments_scope.includes(:user, :post)
-                                    .order(created_at: :desc)
+                                    .order('comments.created_at DESC')
                                     .limit(50)
                                     .map do |c|
                                       {
@@ -103,13 +103,13 @@ class AnalyticsController < ApplicationController
       comments: recent_comments,
       posts_meta: {
         current_page: 1,
-        total_pages: (posts_scope.count / 10.0).ceil,
-        total_count: posts_scope.count
+        total_pages: (total_posts / 10.0).ceil,
+        total_count: total_posts
       },
       comments_meta: {
         current_page: 1,
-        total_pages: (comments_scope.count / 10.0).ceil,
-        total_count: comments_scope.count
+        total_pages: (total_comments / 10.0).ceil,
+        total_count: total_comments
       }
     }
   end
@@ -134,9 +134,9 @@ class AnalyticsController < ApplicationController
     end_date = params[:end_date].present? ? Date.parse(params[:end_date]) : Date.today
     scope = scope.where(created_at: start_date.beginning_of_day..end_date.end_of_day)
 
-    total_count = scope.count
+    total_count = scope.distinct.count
     posts = scope.includes(:hashtags, :user)
-                .order(created_at: :desc)
+                .order('posts.created_at DESC')
                 .offset(offset)
                 .limit(per_page)
                 .map do |p|
@@ -185,9 +185,9 @@ class AnalyticsController < ApplicationController
     end_date = params[:end_date].present? ? Date.parse(params[:end_date]) : Date.today
     scope = scope.where(created_at: start_date.beginning_of_day..end_date.end_of_day)
 
-    total_count = scope.count
+    total_count = scope.distinct.count
     comments = scope.includes(:user, :post)
-                   .order(created_at: :desc)
+                   .order('comments.created_at DESC')
                    .offset(offset)
                    .limit(per_page)
                    .map do |c|
